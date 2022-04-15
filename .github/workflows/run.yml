@@ -1,0 +1,33 @@
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0,15,30,45 * * * *"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - run: pip3 install -r requirements.txt
+
+      - uses: rssnyder/ghcr-artifact-store@0.1.0
+        with:
+          artifact: posts.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: python main.py
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          SUBREDDIT: desmoines
+          POST_DOMAIN: desmoinesregister.com
+
+      - uses: rssnyder/ghcr-artifact-store@0.1.0
+        with:
+          method: PUT
+          artifact: posts.json
+          token: ${{ secrets.GITHUB_TOKEN }}
