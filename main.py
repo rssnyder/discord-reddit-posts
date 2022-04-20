@@ -39,17 +39,19 @@ if __name__ == "__main__":
 
         link = ""
 
-        for domain in getenv("POST_DOMAIN", "").split(";"):
-            if domain.lower() in post["data"].get("domain", "").lower():
-                link = "https://reddit.com" + post["data"].get(
-                    "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
-                )
+        if getenv("POST_DOMAIN"):
+            for domain in getenv("POST_DOMAIN").split(";"):
+                if domain.lower() in post["data"].get("domain", "").lower():
+                    link = "https://reddit.com" + post["data"].get(
+                        "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
+                    )
 
-        for title in getenv("POST_TITLE", "").split(";"):
-            if title.lower() in post["data"].get("title", "").lower():
-                link = "https://reddit.com" + post["data"].get(
-                    "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
-                )
+        if getenv("POST_TITLE"):
+            for title in getenv("POST_TITLE").split(";"):
+                if title.lower() in post["data"].get("title", "").lower():
+                    link = "https://reddit.com" + post["data"].get(
+                        "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
+                    )
 
         if not link:
             continue
