@@ -30,13 +30,13 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           SUBREDDIT: mechmarket
-          POST_TITLE: iqunix
+          POST_TITLE: iqunix;air75
       
       - run: python main.py
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          SUBREDDIT: mechmarket
-          POST_TITLE: air75
+          SUBREDDIT: hardwareswap
+          POST_TITLE: iqunix;air75;raspberry
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:

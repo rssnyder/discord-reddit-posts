@@ -14,9 +14,9 @@ def get_posts(subreddit: str) -> dict:
     """
 
     response = get(
-        SUBREDDIT_URL + subreddit + ".json",
+        SUBREDDIT_URL + subreddit + "/new.json",
         headers={
-            "User-Agent": "linux:github.discord-reddit-posts:v0.0.1 (by /u/Optimus_Banana)"
+            "User-Agent": f"linux:github.discord-reddit-posts:v0.0.1 (by github.com/{getenv('GITHUB_ACTOR', 'rssnyder')})"
         },
     )
 
@@ -27,47 +27,42 @@ def get_posts(subreddit: str) -> dict:
 
 if __name__ == "__main__":
 
-    if getenv("WEBHOOK_URL"):
-        db_name = getenv("DB") or "posts.json"
-        posts_db = TinyDB(db_name)
-        posts = Query()
+    db_name = getenv("DB", "posts.json")
+    posts_db = TinyDB(db_name)
+    posts = Query()
 
-        for post in get_posts(getenv("SUBREDDIT")):
+    for post in get_posts(getenv("SUBREDDIT", "all")):
 
-            if posts_db.search(posts.id == post["data"]["id"]):
-                print("already sent post")
-                continue
+        if posts_db.search(posts.id == post["data"]["id"]):
+            print("already sent post")
+            continue
 
-            link = ""
-            if getenv("POST_DOMAIN"):
-                if (
-                    getenv("POST_DOMAIN").lower()
-                    in post["data"].get("domain", "").lower()
-                ):
+        link = ""
+
+        if getenv("POST_DOMAIN"):
+            for domain in getenv("POST_DOMAIN").split(";"):
+                if domain.lower() in post["data"].get("domain", "").lower():
                     link = "https://reddit.com" + post["data"].get(
-                        "permalink", "/r/" + getenv("SUBREDDIT")
+                        "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
                     )
 
-            if getenv("POST_TITLE"):
-                print(post["data"].get("title", ""))
-                if (
-                    getenv("POST_TITLE").lower()
-                    in post["data"].get("title", "").lower()
-                ):
+        if getenv("POST_TITLE"):
+            for title in getenv("POST_TITLE").split(";"):
+                if title.lower() in post["data"].get("title", "").lower():
                     link = "https://reddit.com" + post["data"].get(
-                        "permalink", "/r/" + getenv("SUBREDDIT")
+                        "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
-            if not link:
-                continue
+        if not link:
+            continue
 
-            for webhook_url in getenv("WEBHOOK_URL").split(";"):
-                webhook = DiscordWebhook(url=webhook_url, content=link)
+        for webhook_url in getenv("WEBHOOK_URL", "").split(";"):
+            webhook = DiscordWebhook(url=webhook_url, content=link)
 
-                response = webhook.execute()
+            response = webhook.execute()
 
-                if response.status_code == 200:
-                    posts_db.insert({"id": post["data"]["id"]})
-                    print("sent " + post["data"]["id"])
+            if response.status_code == 200:
+                posts_db.insert({"id": post["data"]["id"]})
+                print("sent " + post["data"]["id"])
 
-            sleep(5)
+        sleep(5)
