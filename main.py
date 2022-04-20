@@ -27,11 +27,11 @@ def get_posts(subreddit: str) -> dict:
 
 if __name__ == "__main__":
 
-    db_name = getenv("DB") or "posts.json"
+    db_name = getenv("DB", "posts.json")
     posts_db = TinyDB(db_name)
     posts = Query()
 
-    for post in get_posts(getenv("SUBREDDIT")):
+    for post in get_posts(getenv("SUBREDDIT", "all")):
 
         if posts_db.search(posts.id == post["data"]["id"]):
             print("already sent post")
@@ -39,22 +39,22 @@ if __name__ == "__main__":
 
         link = ""
 
-        for domain in getenv("POST_DOMAIN").split(";"):
+        for domain in getenv("POST_DOMAIN", "").split(";"):
             if domain.lower() in post["data"].get("domain", "").lower():
                 link = "https://reddit.com" + post["data"].get(
                     "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
                 )
 
-        for title in getenv("POST_TITLE").split(";"):
+        for title in getenv("POST_TITLE", "").split(";"):
             if title.lower() in post["data"].get("title", "").lower():
                 link = "https://reddit.com" + post["data"].get(
-                    "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
+                    "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                 )
 
         if not link:
             continue
 
-        for webhook_url in getenv("WEBHOOK_URL").split(";"):
+        for webhook_url in getenv("WEBHOOK_URL", "").split(";"):
             webhook = DiscordWebhook(url=webhook_url, content=link)
 
             response = webhook.execute()
