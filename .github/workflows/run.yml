@@ -31,6 +31,7 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           SUBREDDIT: mechmarket
           POST_TITLE: iqunix;air75
+          POST_TEXT: iqunix;air75
       
       - run: python main.py
         env:

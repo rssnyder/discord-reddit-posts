@@ -46,9 +46,16 @@ if __name__ == "__main__":
                         "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
                     )
 
-        if getenv("POST_TITLE"):
+        if getenv("POST_TITLE") and not link:
             for title in getenv("POST_TITLE").split(";"):
                 if title.lower() in post["data"].get("title", "").lower():
+                    link = "https://reddit.com" + post["data"].get(
+                        "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
+                    )
+
+        if getenv("POST_TEXT") and not link:
+            for text in getenv("POST_TEXT").split(";"):
+                if text.lower() in post["data"].get("selftext", "").lower():
                     link = "https://reddit.com" + post["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
