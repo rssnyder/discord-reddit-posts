@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         if getenv("POST_TEXT") and not link:
             for text in getenv("POST_TEXT").split(";"):
-                if text.lower() in post["data"].get("title", "").lower():
+                if text.lower() in post["data"].get("selftext", "").lower():
                     link = "https://reddit.com" + post["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
