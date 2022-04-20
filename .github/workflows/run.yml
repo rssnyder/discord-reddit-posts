@@ -25,6 +25,18 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           SUBREDDIT: desmoines
           POST_DOMAIN: desmoinesregister.com
+      
+      - run: python main.py
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          SUBREDDIT: mechmarket
+          POST_TITLE: iqunix
+      
+      - run: python main.py
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          SUBREDDIT: mechmarket
+          POST_TITLE: air75
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:
