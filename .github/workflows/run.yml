@@ -37,7 +37,7 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           SUBREDDIT: hardwareswap
-          POST_TITLE: iqunix;air75;raspberry
+          POST_TITLE: iqunix;air75;raspberry;framework
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:
