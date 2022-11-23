@@ -1,0 +1,17 @@
+[Unit]
+Description=discord-reddit-posts %i
+Documentation=https://github.com/rssnyder/discord-reddit-posts
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+User=discordredditposts
+Group=discordredditposts
+WorkingDirectory=/opt/discord-reddit-posts
+ExecStart=/opt/discord-reddit-posts/discord-reddit-posts -conf /etc/discord-reddit-posts.%i.conf
+
+[Install]
+WantedBy=multi-user.target

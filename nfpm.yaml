@@ -1,0 +1,16 @@
+name: "discord-reddit-posts"
+arch: "amd64"
+platform: "linux"
+version: "v0.0.0"
+section: "default"
+priority: "extra"
+maintainer: Riley Snyder <rileysndr@gmail.com>
+homepage: https://github.com/rssnyder/discord-reddit-posts
+depends:
+- python3
+contents:
+- src: ./dist
+  dst: /opt/discord-reddit-posts
+- src: ./service/discord-reddit-posts.service
+  dst: /lib/systemd/system/discord-reddit-posts.service
+  type: config
