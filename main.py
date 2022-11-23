@@ -1,7 +1,7 @@
 from time import sleep
 from os import getenv
 
-from requests import get
+from requests import get, post
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from tinydb import TinyDB, Query
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
             for domain in getenv("POST_DOMAIN").split(";"):
                 if domain.lower() in post["data"].get("domain", "").lower():
                     link = "https://reddit.com" + post["data"].get(
-                        "permalink", "/r/" + getenv("SUBREDDIT") + "/new"
+                        "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
         if getenv("POST_TITLE") and not link:
@@ -60,6 +60,13 @@ if __name__ == "__main__":
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
+        if getenv("POST_AUTHOR") and not link:
+            for author in getenv("POST_AUTHOR").split(";"):
+                if author.lower() in post["data"].get("author", "").lower():
+                    link = "https://reddit.com" + post["data"].get(
+                        "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
+                    )
+
         if not link:
             continue
 
@@ -69,6 +76,27 @@ if __name__ == "__main__":
             response = webhook.execute()
 
             if response.status_code == 200:
+                posts_db.insert({"id": post["data"]["id"]})
+                print("sent " + post["data"]["id"])
+            else:
+                print("discord fail: " + post["data"]["id"])
+
+        if getenv("PUSHOVER_APP") and getenv("PUSHOVER_USER"):
+            resp = post(
+                "https://api.pushover.net/1/messages.json",
+                json={
+                    "token": getenv("PUSHOVER_APP"),
+                    "user": getenv("PUSHOVER_USER"),
+                    "title": "r/" + getenv("SUBREDDIT", "all"),
+                    "message": link,
+                },
+            )
+
+            try:
+                resp.raise_for_status()
+            except:
+                print("pushover fail: " + post["data"]["id"])
+            else:
                 posts_db.insert({"id": post["data"]["id"]})
                 print("sent " + post["data"]["id"])
 
