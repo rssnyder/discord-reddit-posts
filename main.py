@@ -70,16 +70,17 @@ if __name__ == "__main__":
         if not link:
             continue
 
-        for webhook_url in getenv("WEBHOOK_URL", "").split(";"):
-            webhook = DiscordWebhook(url=webhook_url, content=link)
+        if getenv("WEBHOOK_URL"):
+            for webhook_url in getenv("WEBHOOK_URL", "").split(";"):
+                webhook = DiscordWebhook(url=webhook_url, content=link)
 
-            response = webhook.execute()
+                response = webhook.execute()
 
-            if response.status_code == 200:
-                posts_db.insert({"id": post["data"]["id"]})
-                print("sent " + post["data"]["id"])
-            else:
-                print("discord fail: " + post["data"]["id"])
+                if response.status_code == 200:
+                    posts_db.insert({"id": post["data"]["id"]})
+                    print("sent " + post["data"]["id"])
+                else:
+                    print("discord fail: " + post["data"]["id"])
 
         if getenv("PUSHOVER_APP") and getenv("PUSHOVER_USER"):
             resp = post(
