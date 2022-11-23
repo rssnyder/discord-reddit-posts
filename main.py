@@ -31,9 +31,9 @@ if __name__ == "__main__":
     posts_db = TinyDB(db_name)
     posts = Query()
 
-    for post in get_posts(getenv("SUBREDDIT", "all")):
+    for submission in get_posts(getenv("SUBREDDIT", "all")):
 
-        if posts_db.search(posts.id == post["data"]["id"]):
+        if posts_db.search(posts.id == submission["data"]["id"]):
             print("already sent post")
             continue
 
@@ -41,29 +41,29 @@ if __name__ == "__main__":
 
         if getenv("POST_DOMAIN"):
             for domain in getenv("POST_DOMAIN").split(";"):
-                if domain.lower() in post["data"].get("domain", "").lower():
-                    link = "https://reddit.com" + post["data"].get(
+                if domain.lower() in submission["data"].get("domain", "").lower():
+                    link = "https://reddit.com" + submission["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
         if getenv("POST_TITLE") and not link:
             for title in getenv("POST_TITLE").split(";"):
-                if title.lower() in post["data"].get("title", "").lower():
-                    link = "https://reddit.com" + post["data"].get(
+                if title.lower() in submission["data"].get("title", "").lower():
+                    link = "https://reddit.com" + submission["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
         if getenv("POST_TEXT") and not link:
             for text in getenv("POST_TEXT").split(";"):
-                if text.lower() in post["data"].get("selftext", "").lower():
-                    link = "https://reddit.com" + post["data"].get(
+                if text.lower() in submission["data"].get("selftext", "").lower():
+                    link = "https://reddit.com" + submission["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
         if getenv("POST_AUTHOR") and not link:
             for author in getenv("POST_AUTHOR").split(";"):
-                if author.lower() in post["data"].get("author", "").lower():
-                    link = "https://reddit.com" + post["data"].get(
+                if author.lower() in submission["data"].get("author", "").lower():
+                    link = "https://reddit.com" + submission["data"].get(
                         "permalink", "/r/" + getenv("SUBREDDIT", "all") + "/new"
                     )
 
@@ -77,10 +77,10 @@ if __name__ == "__main__":
                 response = webhook.execute()
 
                 if response.status_code == 200:
-                    posts_db.insert({"id": post["data"]["id"]})
-                    print("sent " + post["data"]["id"])
+                    posts_db.insert({"id": submission["data"]["id"]})
+                    print("sent " + submission["data"]["id"])
                 else:
-                    print("discord fail: " + post["data"]["id"])
+                    print("discord fail: " + submission["data"]["id"])
 
         if getenv("PUSHOVER_APP") and getenv("PUSHOVER_USER"):
             resp = post(
@@ -96,9 +96,9 @@ if __name__ == "__main__":
             try:
                 resp.raise_for_status()
             except:
-                print("pushover fail: " + post["data"]["id"])
+                print("pushover fail: " + submission["data"]["id"])
             else:
-                posts_db.insert({"id": post["data"]["id"]})
-                print("sent " + post["data"]["id"])
+                posts_db.insert({"id": submission["data"]["id"]})
+                print("sent " + submission["data"]["id"])
 
         sleep(5)
