@@ -26,15 +26,12 @@ def get_posts(subreddit: str) -> dict:
 
 
 if __name__ == "__main__":
-
     db_name = getenv("DB", "posts.json")
     posts_db = TinyDB(db_name)
     posts = Query()
 
     while True:
-
         for submission in get_posts(getenv("SUBREDDIT", "all")):
-
             if posts_db.search(posts.id == submission["data"]["id"]):
                 print("already sent post")
                 continue
@@ -104,6 +101,6 @@ if __name__ == "__main__":
                     print("sent " + submission["data"]["id"])
 
             sleep(5)
-    
+
         print("sleeping")
-        sleep(int(getenv('LOOP_SECONDS', 60)))
+        sleep(int(getenv("LOOP_SECONDS", 60)))
