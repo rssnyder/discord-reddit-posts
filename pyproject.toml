@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "discord-reddit-posts"
+version = "0.1.0"
+description = "alert on reddit posts"
+authors = ["Riley Snyder <rileysnyder@protonmail.ch>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "discord_reddit_posts"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+discord-webhook = "^1.1.0"
+tinydb = "^4.7.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
