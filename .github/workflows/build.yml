@@ -11,5 +11,20 @@ permissions:
   packages: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' 
+          cache: 'pip'
+      
+      - run: |
+          pip install poetry
+          poetry install
+          poetry run black --check .
+
   docker-build-and-push:
     uses: rssnyder/actions/.github/workflows/docker-build-and-push.yml@main
