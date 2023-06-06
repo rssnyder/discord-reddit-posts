@@ -27,4 +27,5 @@ jobs:
           poetry run black --check .
 
   docker-build-and-push:
-    uses: rssnyder/actions/.github/workflows/docker-build-and-push.yml@main
+    needs: test
+    uses: rssnyder/actions/.github/workflows/docker-build-and-push.yml@main1
