@@ -1,17 +1,17 @@
 on:
   workflow_dispatch:
+  pull_request:
   release:
     types:
       - published
-  pull_request:
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  python-poetry:
+  python:
     uses: rssnyder/actions/.github/workflows/python-poetry.yml@main
-  docker-build-and-push:
-    needs: python-poetry
+  docker:
+    needs: python
     uses: rssnyder/actions/.github/workflows/docker-build-and-push.yml@main
